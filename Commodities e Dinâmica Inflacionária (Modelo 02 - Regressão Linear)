@@ -1,0 +1,73 @@
+## Título: Commodities e Dinâmica Inflacionária (Modelo 02 - Regressão Linear) --------------------------------------
+## Autor: Guilherme Micota Stipp
+## Data: 15/04/2022
+
+## Pacotes Utilizados -------------------------------------------------------------------------------------------------------------------------
+
+library(mise)
+library(tidyverse)
+library(readxl)
+library(stargazer)
+library(lmtest)
+library(zoo)
+
+## Diretório de Trabalho ----------------------------------------------------------------------------------------------------------------------
+
+mise(vars = TRUE, figs = TRUE, console = FALSE)
+setwd('C:/Users/guilhermems/Desktop/002 - Commodities e Dinâmica Inflacionária')
+
+## Setup de Informações -----------------------------------------------------------------------------------------------------------------------
+
+source("C:/Users/guilhermems/Desktop/002 - Commodities e Dinâmica Inflacionária/Modelo 01.R")
+
+lag_administrados <- (lag_granger_agregado |> 
+  filter(indice == 'Administrados') |> 
+  arrange(variavel) |> 
+  select(ordem))$ordem
+
+lag_alimentos <- (lag_granger_agregado |> 
+  filter(indice == 'Alimentos') |> 
+  arrange(variavel) |> 
+  select(ordem))$ordem
+
+lag_industriais <- (lag_granger_agregado |> 
+  filter(indice == 'Industriais') |> 
+  arrange(variavel) |> 
+  select(ordem))$ordem
+
+lag_servicos <- (lag_granger_agregado |> 
+  filter(indice == 'Serviços') |> 
+  arrange(variavel) |> 
+  select(ordem))$ordem
+
+## Manipulação da Base de Dados ---------------------------------------------------------------------------------------------------------------
+
+base_dados <- as.ts(x = read.zoo(file = tibble(read_xlsx(path = '002 - Commodities e Dinâmica Inflacionária.xlsx', sheet = 'Base de Dados')) |>
+              mutate(data = as.Date(x = data)), format = '%Y-%m-%d', FUN = as.yearmon))
+
+## Regressão Linear - Administrados -----------------------------------------------------------------------------------------------
+
+modelo_administrados <- lm(formula = administrados ~ lag(x = ic_agropecuaria, n = lag_administrados[1]) + 
+                                                     lag(x = ic_energia, n = lag_administrados[2]) + 
+                                                     lag(x = ic_metais, n = lag_administrados[3]),
+                           data = base_dados)
+
+modelo_alimentos <- lm(formula = alimentos ~ lag(x = ic_agropecuaria, n = lag_alimentos[1]) + 
+                                                     lag(x = ic_energia, n = lag_alimentos[2]) + 
+                                                     lag(x = ic_metais, n = lag_alimentos[3]),
+                           data = base_dados)
+
+modelo_industriais <- lm(formula = industriais ~ lag(x = ic_agropecuaria, n = lag_industriais[1]) + 
+                                                 lag(x = ic_energia, n = lag_industriais[2]) + 
+                                                 lag(x = ic_metais, n = lag_industriais[3]),
+                           data = base_dados)
+
+modelo_servicos <- lm(formula = servicos ~ lag(x = ic_agropecuaria, n = lag_servicos[1]) + 
+                                           lag(x = ic_energia, n = lag_servicos[2]) + 
+                                           lag(x = ic_metais, n = lag_servicos[3]),
+                           data = base_dados)
+
+stargazer(modelo_administrados, modelo_alimentos, modelo_industriais, modelo_servicos,
+          type = 'text')
+
+
