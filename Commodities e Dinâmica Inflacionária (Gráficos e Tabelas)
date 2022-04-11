@@ -1,0 +1,25 @@
+## Título: Commodities e Dinâmica Inflacionária (Gráficos e Tabelas) ----------------------------------------------------------------------------
+## Autor: Guilherme Micota Stipp
+## Data: 15/04/2022
+
+## Pacotes Utilizados ------------------------------------------------------------------------------------------------------------------------
+
+library(mise)
+library(tidyverse)
+library(extrafont)
+library(stargazer)
+library(readxl)
+
+## DiretÃ³rio de Trabalho ---------------------------------------------------------------------------------------------------------------------
+
+setwd('C:/Users/guilhermems/Desktop/002 - Commodities e Dinâmica Inflacionária')
+source("C:/Users/guilhermems/Desktop/002 - Commodities e Dinâmica Inflacionária/Modelo 02.R")
+
+## Gráficos ----------------------------------------------------------------------------------------------------------------------------------
+
+
+
+## Tabelas -----------------------------------------------------------------------------------------------------------------------------------
+
+stargazer(modelo_administrados, modelo_alimentos, modelo_industriais, modelo_servicos, type = 'latex', 
+          title = 'Modelo Econométrico de Repasse de Commodities para o IPCA (%)', digits = 2, header = F)
