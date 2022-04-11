@@ -1,0 +1,249 @@
+## Título: Commodities e Dinâmica Inflacionária (Modelo 01 - Cointegração de Granger) --------------------------------------
+## Autor: Guilherme Micota Stipp
+## Data: 15/04/2022
+
+## Pacotes Utilizados -------------------------------------------------------------------------------------------------------------------------
+
+library(mise)
+library(tidyverse)
+library(readxl)
+library(stargazer)
+library(lmtest)
+library(zoo)
+
+## Diretório de Trabalho ----------------------------------------------------------------------------------------------------------------------
+
+mise(vars = TRUE, figs = TRUE, console = FALSE)
+setwd('C:/Users/guilhermems/Desktop/002 - Commodities e Dinâmica Inflacionária')
+
+## Setup de Informações -----------------------------------------------------------------------------------------------------------------------
+
+
+
+## Manipulação da Base de Dados ---------------------------------------------------------------------------------------------------------------
+
+base_dados <- as.ts(x = read.zoo(file = tibble(read_xlsx(path = '002 - Commodities e Dinâmica Inflacionária.xlsx', sheet = 'Base de Dados')) |>
+              mutate(data = as.Date(x = data)), format = '%Y-%m-%d', FUN = as.yearmon))
+
+## Teste de Cointegração de Granger - Administrados -----------------------------------------------------------------------------------------------
+
+agropecuaria <- c(rep(x = NA, times = 12))
+energia <- c(rep(x = NA, times = 12))
+metais <- c(rep(x = NA, times = 12))
+
+for (i in seq(from = 1, to = 12, by = 1)) {
+  x <- grangertest(administrados ~ ic_agropecuaria, data = base_dados, order = i)$`Pr(>F)`[2]
+  agropecuaria[i] <- x 
+}
+
+for (i in seq(from = 1, to = 12, by = 1)) {
+  x <- grangertest(administrados ~ ic_energia, data = base_dados, order = i)$`Pr(>F)`[2]
+  energia[i] <- x 
+}
+
+for (i in seq(from = 1, to = 12, by = 1)) {
+  x <- grangertest(administrados ~ ic_metais, data = base_dados, order = i)$`Pr(>F)`[2]
+  metais[i] <- x 
+}
+
+granger_administrados <- tibble(ordem = seq(from = 1, to = 12, by = 1)) |> 
+  mutate(`Agropecuária` = agropecuaria, `Energia` = energia, `Metais` = metais) |> 
+  pivot_longer(cols = !c(ordem), names_to = 'variavel', values_to = 'valor') |> 
+  mutate(indice = 'Administrados')
+
+rm(agropecuaria, energia, metais, i, x)
+
+## Teste de Cointegração de Granger - Alimentos -----------------------------------------------------------------------------------------------
+
+agropecuaria <- c(rep(x = NA, times = 12))
+energia <- c(rep(x = NA, times = 12))
+metais <- c(rep(x = NA, times = 12))
+
+for (i in seq(from = 1, to = 12, by = 1)) {
+  x <- grangertest(alimentos ~ ic_agropecuaria, data = base_dados, order = i)$`Pr(>F)`[2]
+  agropecuaria[i] <- x 
+}
+
+for (i in seq(from = 1, to = 12, by = 1)) {
+  x <- grangertest(alimentos ~ ic_energia, data = base_dados, order = i)$`Pr(>F)`[2]
+  energia[i] <- x 
+}
+
+for (i in seq(from = 1, to = 12, by = 1)) {
+  x <- grangertest(alimentos ~ ic_metais, data = base_dados, order = i)$`Pr(>F)`[2]
+  metais[i] <- x 
+}
+
+granger_alimentos <- tibble(ordem = seq(from = 1, to = 12, by = 1)) |> 
+  mutate(`Agropecuária` = agropecuaria, `Energia` = energia, `Metais` = metais) |> 
+  pivot_longer(cols = !c(ordem), names_to = 'variavel', values_to = 'valor') |> 
+  mutate(indice = 'Alimentos')
+
+rm(agropecuaria, energia, metais, i, x)
+
+## Teste de Cointegração de Granger - Industriais -----------------------------------------------------------------------------------------------
+
+agropecuaria <- c(rep(x = NA, times = 12))
+energia <- c(rep(x = NA, times = 12))
+metais <- c(rep(x = NA, times = 12))
+
+for (i in seq(from = 1, to = 12, by = 1)) {
+  x <- grangertest(industriais ~ ic_agropecuaria, data = base_dados, order = i)$`Pr(>F)`[2]
+  agropecuaria[i] <- x 
+}
+
+for (i in seq(from = 1, to = 12, by = 1)) {
+  x <- grangertest(industriais ~ ic_energia, data = base_dados, order = i)$`Pr(>F)`[2]
+  energia[i] <- x 
+}
+
+for (i in seq(from = 1, to = 12, by = 1)) {
+  x <- grangertest(industriais ~ ic_metais, data = base_dados, order = i)$`Pr(>F)`[2]
+  metais[i] <- x 
+}
+
+granger_industriais <- tibble(ordem = seq(from = 1, to = 12, by = 1)) |> 
+  mutate(`Agropecuária` = agropecuaria, `Energia` = energia, `Metais` = metais) |> 
+  pivot_longer(cols = !c(ordem), names_to = 'variavel', values_to = 'valor') |> 
+  mutate(indice = 'Industriais')
+
+rm(agropecuaria, energia, metais, i, x)
+
+## Teste de Cointegração de Granger - Serviços -----------------------------------------------------------------------------------------------
+
+agropecuaria <- c(rep(x = NA, times = 12))
+energia <- c(rep(x = NA, times = 12))
+metais <- c(rep(x = NA, times = 12))
+
+for (i in seq(from = 1, to = 12, by = 1)) {
+  x <- grangertest(servicos ~ ic_agropecuaria, data = base_dados, order = i)$`Pr(>F)`[2]
+  agropecuaria[i] <- x 
+}
+
+for (i in seq(from = 1, to = 12, by = 1)) {
+  x <- grangertest(servicos ~ ic_energia, data = base_dados, order = i)$`Pr(>F)`[2]
+  energia[i] <- x 
+}
+
+for (i in seq(from = 1, to = 12, by = 1)) {
+  x <- grangertest(servicos ~ ic_metais, data = base_dados, order = i)$`Pr(>F)`[2]
+  metais[i] <- x 
+}
+
+granger_servicos <- tibble(ordem = seq(from = 1, to = 12, by = 1)) |> 
+  mutate(`Agropecuária` = agropecuaria, `Energia` = energia, `Metais` = metais) |> 
+  pivot_longer(cols = !c(ordem), names_to = 'variavel', values_to = 'valor') |> 
+  mutate(indice = 'Serviços')
+
+rm(agropecuaria, energia, metais, i, x)
+
+## Agregar os Resultados do Teste de Cointegração de Granger por Grupo do IPCA ----------------------------------------------------------------
+
+granger_agregado <- granger_servicos |> 
+  full_join(x = granger_industriais) |> 
+  full_join(x = granger_alimentos) |> 
+  full_join(x = granger_administrados) 
+
+rm(granger_administrados, granger_alimentos, granger_industriais, granger_servicos, base_dados)
+  
+## Filtrar os Lags a Serem Utilizados no Modelo - Administrados ----------------------------------------------------------------
+
+lag_administrados_agropecuaria <- (tibble(granger_agregado) |> 
+  filter(indice == 'Administrados',
+         variavel == 'Agropecuária') |> 
+  arrange(valor))[1,]
+
+lag_administrados_energia <- (tibble(granger_agregado) |> 
+  filter(indice == 'Administrados',
+         variavel == 'Energia') |> 
+  arrange(valor))[1,]
+
+lag_administrados_metais <- (tibble(granger_agregado) |> 
+  filter(indice == 'Administrados',
+         variavel == 'Metais') |> 
+  arrange(valor))[1,]
+
+lag_administrados <- tibble(lag_administrados_metais) |> 
+  full_join(x = lag_administrados_energia) |> 
+  full_join(x = lag_administrados_agropecuaria)
+
+rm(lag_administrados_agropecuaria, lag_administrados_energia, lag_administrados_metais)
+
+## Filtrar os Lags a Serem Utilizados no Modelo - Alimentos ----------------------------------------------------------------
+
+lag_alimentos_agropecuaria <- (tibble(granger_agregado) |> 
+                                     filter(indice == 'Alimentos',
+                                            variavel == 'Agropecuária') |> 
+                                     arrange(valor))[1,]
+
+lag_alimentos_energia <- (tibble(granger_agregado) |> 
+                                filter(indice == 'Alimentos',
+                                       variavel == 'Energia') |> 
+                                arrange(valor))[1,]
+
+lag_alimentos_metais <- (tibble(granger_agregado) |> 
+                               filter(indice == 'Alimentos',
+                                      variavel == 'Metais') |> 
+                               arrange(valor))[1,]
+
+lag_alimentos <- tibble(lag_alimentos_metais) |> 
+  full_join(x = lag_alimentos_energia) |> 
+  full_join(x = lag_alimentos_agropecuaria)
+
+rm(lag_alimentos_agropecuaria, lag_alimentos_energia, lag_alimentos_metais)
+
+## Filtrar os Lags a Serem Utilizados no Modelo - Industriais ----------------------------------------------------------------
+
+lag_industriais_agropecuaria <- (tibble(granger_agregado) |> 
+                                 filter(indice == 'Industriais',
+                                        variavel == 'Agropecuária') |> 
+                                 arrange(valor))[1,]
+
+lag_industriais_energia <- (tibble(granger_agregado) |> 
+                            filter(indice == 'Industriais',
+                                   variavel == 'Energia') |> 
+                            arrange(valor))[1,]
+
+lag_industriais_metais <- (tibble(granger_agregado) |> 
+                           filter(indice == 'Industriais',
+                                  variavel == 'Metais') |> 
+                           arrange(valor))[1,]
+
+lag_industriais <- tibble(lag_industriais_metais) |> 
+  full_join(x = lag_industriais_energia) |> 
+  full_join(x = lag_industriais_agropecuaria)
+
+rm(lag_industriais_agropecuaria, lag_industriais_energia, lag_industriais_metais)
+
+## Filtrar os Lags a Serem Utilizados no Modelo - Serviços ----------------------------------------------------------------
+
+lag_servicos_agropecuaria <- (tibble(granger_agregado) |> 
+                                   filter(indice == 'Serviços',
+                                          variavel == 'Agropecuária') |> 
+                                   arrange(valor))[1,]
+
+lag_servicos_energia <- (tibble(granger_agregado) |> 
+                              filter(indice == 'Serviços',
+                                     variavel == 'Energia') |> 
+                              arrange(valor))[1,]
+
+lag_servicos_metais <- (tibble(granger_agregado) |> 
+                             filter(indice == 'Serviços',
+                                    variavel == 'Metais') |> 
+                             arrange(valor))[1,]
+
+lag_servicos <- tibble(lag_servicos_metais) |> 
+  full_join(x = lag_servicos_energia) |> 
+  full_join(x = lag_servicos_agropecuaria)
+
+rm(lag_servicos_agropecuaria, lag_servicos_energia, lag_servicos_metais)
+
+## Agregar os Resultados dos Lags do Teste de Cointegração de Granger por Grupo do IPCA ----------------------------------------------------------------
+
+lag_granger_agregado <- lag_servicos |> 
+  full_join(x = lag_industriais) |> 
+  full_join(x = lag_alimentos) |> 
+  full_join(x = lag_administrados) |> 
+  group_by(indice)
+
+rm(lag_servicos, lag_industriais, lag_alimentos, lag_administrados)
